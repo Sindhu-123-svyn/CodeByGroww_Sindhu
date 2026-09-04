@@ -1,0 +1,510 @@
+/* ============================================================
+   Design tokens
+   ============================================================ */
+:root {
+  color-scheme: light;
+
+  /* Neutrals */
+  --gray-25: #fcfcfd;
+  --gray-50: #f8f9fb;
+  --gray-100: #f1f3f6;
+  --gray-200: #e4e7ec;
+  --gray-300: #d0d5dd;
+  --gray-400: #98a2b3;
+  --gray-500: #667085;
+  --gray-600: #475467;
+  --gray-700: #344054;
+  --gray-800: #1d2939;
+  --gray-900: #101828;
+
+  /* Brand (Groww-style mint/teal-green) */
+  --brand-50: #e9fbf4;
+  --brand-100: #cdf6e6;
+  --brand-200: #97ecc9;
+  --brand-400: #23d5a3;
+  --brand-500: #00c896;
+  --brand-600: #00a97e;
+  --brand-700: #00815f;
+
+  /* Semantic severity */
+  --major: #e11d48;
+  --major-bg: #fff1f2;
+  --major-border: #fecdd3;
+  --notable: #b45309;
+  --notable-bg: #fffbeb;
+  --notable-border: #fde68a;
+  --minor: #2563eb;
+  --minor-bg: #eff6ff;
+  --minor-border: #bfdbfe;
+  --neutral: #64748b;
+  --neutral-bg: #f1f5f9;
+  --neutral-border: #e2e8f0;
+
+  --success: #059669;
+  --success-bg: #ecfdf5;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --stale: #94a3b8;
+
+  /* Surfaces */
+  --bg: linear-gradient(180deg, #fafbfd 0%, #f5f6fa 100%);
+  --bg-solid: #f6f7fa;
+  --surface: #ffffff;
+  --surface-hover: #fbfbfe;
+  --border: var(--gray-200);
+  --border-strong: var(--gray-300);
+
+  /* Text */
+  --text: var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-muted: var(--gray-500);
+  --text-on-brand: #ffffff;
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 10px -2px rgba(16, 24, 40, 0.08), 0 2px 6px -2px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 16px 24px -6px rgba(16, 24, 40, 0.1), 0 6px 10px -4px rgba(16, 24, 40, 0.04);
+  --ring-brand: 0 0 0 3.5px rgba(0, 200, 150, 0.18);
+
+  /* Shape */
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fast: 130ms;
+  --med: 200ms;
+
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-feature-settings: "cv11", "ss01", "cv02";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--brand-200);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+  border: 2.5px solid var(--bg-solid);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+  color: var(--gray-900);
+}
+h1 {
+  font-size: 26px;
+}
+h2 {
+  font-size: 20px;
+}
+h3 {
+  font-size: 16px;
+}
+
+p {
+  margin: 0 0 8px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: var(--brand-600);
+  text-decoration: none;
+  transition: color var(--fast) var(--ease);
+}
+a:hover {
+  color: var(--brand-700);
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--brand-400);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   Layout primitives
+   ============================================================ */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 20px 64px;
+  width: 100%;
+}
+
+/* ============================================================
+   Card
+   ============================================================ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--med) var(--ease), border-color var(--med) var(--ease),
+    transform var(--med) var(--ease);
+}
+
+.card-interactive:hover {
+  border-color: var(--gray-300);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 550;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background var(--fast) var(--ease), border-color var(--fast) var(--ease),
+    box-shadow var(--fast) var(--ease), transform var(--fast) var(--ease), color var(--fast) var(--ease);
+}
+.btn:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+.btn:active {
+  transform: translateY(0.5px) scale(0.985);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12.5px;
+  border-radius: 7px;
+}
+
+.btn-primary {
+  background: var(--brand-600);
+  border-color: var(--brand-600);
+  color: var(--text-on-brand);
+  box-shadow: 0 1px 2px rgba(0, 169, 126, 0.28), 0 0 0 0 rgba(0, 200, 150, 0);
+}
+.btn-primary:hover {
+  background: var(--brand-700);
+  border-color: var(--brand-700);
+}
+
+.btn-danger {
+  border-color: var(--danger-bg);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+.btn-danger:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-secondary);
+}
+.btn-ghost:hover {
+  background: var(--gray-100);
+  border-color: transparent;
+  color: var(--text);
+}
+
+.btn-icon {
+  padding: 7px;
+  width: 32px;
+  height: 32px;
+}
+
+/* ============================================================
+   Forms
+   ============================================================ */
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--gray-400);
+}
+input:hover,
+select:hover {
+  border-color: var(--gray-400);
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--brand-500);
+  box-shadow: var(--ring-brand);
+}
+
+/* ============================================================
+   Typographic utilities
+   ============================================================ */
+.error-text {
+  color: var(--danger);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   Badges
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 650;
+  border: 1px solid transparent;
+  line-height: 1.6;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+/* ============================================================
+   Skeleton loaders
+   ============================================================ */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after,
+  .fade-in,
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ============================================================
+   Motion utilities
+   ============================================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in {
+  animation: fadeInUp var(--med) var(--ease) both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  opacity: 0.7;
+}
+
+/* ============================================================
+   Modal / dialog / toast (see components/shared)
+   ============================================================ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.44);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+  animation: fadeIn var(--fast) var(--ease) both;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 380px;
+  padding: 22px;
+  animation: scaleIn var(--med) var(--ease) both;
+}
+
+.toast-stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 200;
+  max-width: 340px;
+}
+
+.toast {
+  background: var(--gray-900);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 13.5px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  animation: fadeInUp var(--med) var(--ease) both;
+}
+.toast-success {
+  background: #064e3b;
+}
+.toast-error {
+  background: #7f1d1d;
+}

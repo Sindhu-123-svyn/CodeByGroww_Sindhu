@@ -1,0 +1,113 @@
+# Smart Market Watchlist — full stack.
+#
+#   docker compose up --build
+#
+# Brings up: Postgres (schema + seed data applied automatically on first
+# run, via docker-entrypoint-initdb.d), Redis, the FastAPI backend, the
+# Ingestion Worker and Signal Engine (separate processes per design §2.1 —
+# neither imports the API, and the API never talks to yfinance directly),
+# and the frontend (built + served by nginx).
+#
+# All credentials/secrets below are the same documented local-dev-only
+# shortcuts used throughout this project (see backend/README.md,
+# frontend/README.md, RUNBOOK.md) — never carry these into anything beyond
+# local development.
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smart_market_watchlist
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      # Applied in filename order, once, only on a fresh (empty) volume —
+      # this is the same schema/seed already used for local (non-docker)
+      # dev, plus one extra script giving the demo1 account a real
+      # password so the dockerized stack needs zero manual setup steps.
+      - ./DATABASE_SCHEMA.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./SEED_DATA.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./docker/init/03-demo-password.sql:/docker-entrypoint-initdb.d/03-demo-password.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/smart_market_watchlist
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: dev-only-change-me
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  ingestion-worker:
+    build: ./backend
+    command: ["python", "-m", "workers.ingestion"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/smart_market_watchlist
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  signal-engine:
+    build: ./backend
+    command: ["python", "-m", "workers.signal_engine"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/smart_market_watchlist
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Runs in the *browser*, not inside the Docker network — must be
+        # whatever host/port the backend is actually published on below.
+        # 127.0.0.1 rather than localhost: on this machine, Docker
+        # Desktop/WSL2's IPv6 loopback relay (wslrelay.exe) got stuck for
+        # port 8000 specifically while IPv4 kept working — since browsers
+        # commonly prefer IPv6 for "localhost", pinning IPv4 here sidesteps
+        # that whole class of flakiness rather than depending on it working.
+        VITE_API_BASE_URL: http://127.0.0.1:8000/api/v1
+    ports:
+      - "5180:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  db_data:

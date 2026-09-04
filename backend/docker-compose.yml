@@ -1,0 +1,8 @@
+# Local dev only. Postgres (smart-market-db) is started separately per the
+# project setup — this compose file just covers Redis, added in Phase 9.
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: smart-market-redis
+    ports:
+      - "6379:6379"
