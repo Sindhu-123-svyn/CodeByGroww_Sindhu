@@ -85,12 +85,13 @@ export function WatchlistManagePage() {
       <span className="eyebrow">Your watchlists</span>
       <h1 style={{ marginTop: 2, marginBottom: 18 }}>Manage Watchlists</h1>
 
-      <div className="card" style={{ marginBottom: 20, display: "flex", gap: 8 }}>
+      <div className="card" style={{ marginBottom: 20, display: "flex", gap: 8, flexWrap: "wrap" }}>
         <input
           placeholder="New watchlist name (optional)"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+          style={{ flex: "1 1 220px" }}
         />
         <button
           className="btn btn-primary"
@@ -111,23 +112,15 @@ export function WatchlistManagePage() {
         />
       ) : (
         <>
-          <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
+          <div className="tab-row" style={{ marginBottom: 20 }}>
             {watchlists.map((wl) => (
               <button
                 key={wl.id}
-                className="btn btn-sm"
-                style={{
-                  borderColor: wl.id === activeId ? "var(--brand-500)" : undefined,
-                  color: wl.id === activeId ? "var(--brand-700)" : undefined,
-                  background: wl.id === activeId ? "var(--brand-50)" : undefined,
-                  fontWeight: wl.id === activeId ? 650 : 500,
-                }}
+                className={`tab ${wl.id === activeId ? "tab-active" : ""}`}
                 onClick={() => setSelectedId(wl.id)}
               >
                 {wl.name}
-                <span className="muted" style={{ fontSize: 11.5 }}>
-                  {wl.item_count}
-                </span>
+                <span className="tab-count">{wl.item_count}</span>
               </button>
             ))}
           </div>

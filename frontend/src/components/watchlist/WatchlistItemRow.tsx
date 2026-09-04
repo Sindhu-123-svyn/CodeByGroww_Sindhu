@@ -3,6 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Link } from "react-router-dom";
 import { GripIcon, TrashIcon } from "../shared/Icons";
 import { PriceChange } from "../shared/PriceChange";
+import { SymbolAvatar } from "../shared/SymbolAvatar";
 import type { WatchlistItemOut } from "../../api/types";
 
 export function WatchlistItemRow({
@@ -32,19 +33,26 @@ export function WatchlistItemRow({
         boxShadow: isDragging ? "var(--shadow-md)" : undefined,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
         <span
           {...attributes}
           {...listeners}
-          style={{ cursor: "grab", color: "var(--gray-400)", display: "flex", touchAction: "none" }}
+          style={{ cursor: "grab", color: "var(--gray-400)", display: "flex", touchAction: "none", flex: "none" }}
           aria-label="Drag to reorder"
         >
           <GripIcon size={16} />
         </span>
-        <Link to={`/symbols/${item.symbol.id}`} className="mono" style={{ fontWeight: 700, color: "var(--text)" }}>
-          {item.symbol.ticker}
+        <Link to={`/symbols/${item.symbol.id}`} style={{ flex: "none", display: "flex" }}>
+          <SymbolAvatar ticker={item.symbol.ticker} size="sm" />
         </Link>
-        <span className="muted">{item.symbol.name}</span>
+        <span style={{ minWidth: 0, overflow: "hidden" }}>
+          <Link to={`/symbols/${item.symbol.id}`} className="mono" style={{ fontWeight: 700, color: "var(--text)" }}>
+            {item.symbol.ticker}
+          </Link>{" "}
+          <span className="muted" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {item.symbol.name}
+          </span>
+        </span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <PriceChange quote={item.latest_quote} />

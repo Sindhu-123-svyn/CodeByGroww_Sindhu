@@ -18,9 +18,12 @@ export function DigestCardSkeleton() {
   return (
     <div className="card" style={{ marginBottom: 10 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <Skeleton width={64} height={16} />
-          <Skeleton width={140} height={12} />
+        <div style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
+          <Skeleton width={30} height={30} radius={10} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Skeleton width={64} height={16} />
+            <Skeleton width={140} height={12} />
+          </div>
         </div>
         <Skeleton width={92} height={30} radius={7} />
       </div>

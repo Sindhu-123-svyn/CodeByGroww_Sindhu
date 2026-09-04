@@ -1,8 +1,12 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useWatchlists } from "../hooks/useWatchlists";
 import { useDigest } from "../hooks/useDigest";
+import { DigestHero } from "../components/digest/DigestHero";
 import { DigestGroup } from "../components/digest/DigestGroup";
 import { AcknowledgeAllButton } from "../components/digest/AcknowledgeAllButton";
+import { MarketOverviewPanel } from "../components/digest/MarketOverviewPanel";
+import { QuickActionsCard } from "../components/digest/QuickActionsCard";
+import { InsightCard } from "../components/digest/InsightCard";
 import { DigestPageSkeleton } from "../components/shared/Skeleton";
 import { ErrorState } from "../components/shared/ErrorState";
 import { EmptyState } from "../components/shared/EmptyState";
@@ -37,31 +41,23 @@ export function DigestPage() {
     );
   }
 
-  const { data: digest, isLoading, error, refetch } = digestQuery;
+  const { data: digest, isLoading, isFetching, error, refetch } = digestQuery;
   const totalEntries = digest ? SEVERITY_ORDER.reduce((n, sev) => n + (digest.groups[sev]?.length ?? 0), 0) : 0;
+  const firstNonEmptySeverity = digest
+    ? SEVERITY_ORDER.find((s) => (digest.groups[s]?.length ?? 0) > 0)
+    : undefined;
+  const hasMajor = (digest?.groups.major?.length ?? 0) > 0;
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-        <div>
-          <span className="eyebrow">Since your last visit</span>
-          <h1 style={{ marginTop: 2 }}>Digest</h1>
-        </div>
-        {activeId && !isLoading && totalEntries > 0 && <AcknowledgeAllButton watchlistId={activeId} />}
-      </div>
+      <DigestHero groups={digest?.groups} watchlistName={activeWatchlist?.name} />
 
       {watchlists.length > 1 && (
-        <div style={{ display: "flex", gap: 6, marginBottom: 18, marginTop: 14, flexWrap: "wrap" }}>
+        <div className="tab-row" style={{ marginBottom: 18, marginTop: 24 }}>
           {watchlists.map((wl) => (
             <button
               key={wl.id}
-              className="btn btn-sm"
-              style={{
-                borderColor: wl.id === activeId ? "var(--brand-500)" : undefined,
-                color: wl.id === activeId ? "var(--brand-700)" : undefined,
-                background: wl.id === activeId ? "var(--brand-50)" : undefined,
-                fontWeight: wl.id === activeId ? 650 : 500,
-              }}
+              className={`tab ${wl.id === activeId ? "tab-active" : ""}`}
               onClick={() => setSearchParams({ watchlist_id: wl.id })}
             >
               {wl.name}
@@ -70,7 +66,7 @@ export function DigestPage() {
         </div>
       )}
 
-      {watchlists.length === 1 && <div style={{ marginBottom: 18 }} />}
+      {watchlists.length === 1 && <div style={{ marginTop: 24 }} />}
 
       {activeWatchlist?.item_count === 0 && (
         <EmptyState
@@ -96,17 +92,27 @@ export function DigestPage() {
               description="No signals since your last visit — check back later."
             />
           )}
-          {digest &&
-            activeId &&
-            SEVERITY_ORDER.map((severity) => (
-              <DigestGroup
-                key={severity}
-                severity={severity}
-                entries={digest.groups[severity] ?? []}
-                watchlistId={activeId}
-                defaultCollapsed={severity === "no_change"}
-              />
-            ))}
+          {digest && activeId && totalEntries > 0 && (
+            <div className="digest-layout">
+              <div className="digest-main">
+                {SEVERITY_ORDER.map((severity) => (
+                  <DigestGroup
+                    key={severity}
+                    severity={severity}
+                    entries={digest.groups[severity] ?? []}
+                    watchlistId={activeId}
+                    defaultCollapsed={severity === "no_change"}
+                    action={severity === firstNonEmptySeverity ? <AcknowledgeAllButton watchlistId={activeId} /> : undefined}
+                  />
+                ))}
+              </div>
+              <aside className="digest-sidebar">
+                <MarketOverviewPanel watchlistId={activeId} />
+                <InsightCard hasMajor={hasMajor} />
+                <QuickActionsCard onRefresh={() => refetch()} refreshing={isFetching} />
+              </aside>
+            </div>
+          )}
         </>
       )}
     </div>

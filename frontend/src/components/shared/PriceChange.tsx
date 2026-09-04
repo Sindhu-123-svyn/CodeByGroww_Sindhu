@@ -1,4 +1,4 @@
-import { formatPercent, formatPrice } from "../../lib/formatters";
+import { dayChangePct, formatPercent, formatPrice } from "../../lib/formatters";
 import type { LatestQuoteOut } from "../../api/types";
 
 /** Price + day change (vs today's open) — the compact "how's it doing"
@@ -12,11 +12,11 @@ export function PriceChange({ quote }: { quote: LatestQuoteOut | null | undefine
     return <span className="muted mono">—</span>;
   }
 
-  const pct = quote.open ? ((quote.price - quote.open) / quote.open) * 100 : null;
+  const pct = dayChangePct(quote);
   const isUp = pct !== null && pct >= 0;
 
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 7 }}>
       <span className="mono" style={{ fontWeight: 700, fontSize: 14, opacity: quote.is_stale ? 0.55 : 1 }}>
         {formatPrice(quote.price)}
       </span>
@@ -24,19 +24,16 @@ export function PriceChange({ quote }: { quote: LatestQuoteOut | null | undefine
         <span
           className="mono"
           style={{
-            fontSize: 12,
+            fontSize: 12.5,
             fontWeight: 700,
             color: isUp ? "var(--success)" : "var(--danger)",
-            background: isUp ? "var(--success-bg)" : "var(--danger-bg)",
-            padding: "2px 6px",
-            borderRadius: 6,
             display: "inline-flex",
             alignItems: "center",
-            gap: 3,
+            gap: 2,
             lineHeight: 1.4,
           }}
         >
-          {isUp ? "▲" : "▼"} {formatPercent(pct)}
+          <span style={{ fontSize: 9 }}>{isUp ? "▲" : "▼"}</span> {formatPercent(pct)}
         </span>
       )}
     </span>

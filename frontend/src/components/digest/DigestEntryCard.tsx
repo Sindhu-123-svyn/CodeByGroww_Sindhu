@@ -4,7 +4,9 @@ import { Sparkline } from "./Sparkline";
 import { BuildingBaselineNotice } from "../shared/BuildingBaselineNotice";
 import { FreshnessBadge } from "../shared/FreshnessBadge";
 import { PriceChange } from "../shared/PriceChange";
+import { SymbolAvatar } from "../shared/SymbolAvatar";
 import { AcknowledgeButton } from "./AcknowledgeButton";
+import { useSparklinePoints } from "../../hooks/useSparklinePoints";
 import {
   ArrowUpDownIcon,
   BarChartIcon,
@@ -50,44 +52,51 @@ export function DigestEntryCard({
     entry.events_since_last_view.length > 0 &&
     entry.events_since_last_view.every((e) => e.event_type === "data_quality_flag");
 
+  const sparklinePoints = useSparklinePoints(entry.symbol.id);
+
   return (
     <div
-      className="card card-interactive fade-in"
+      className="card card-interactive fade-in digest-entry-card"
       style={{
-        marginBottom: 10,
+        marginBottom: 12,
         borderLeft: `3px solid ${ACCENT[topSeverity]}`,
         animationDelay: `${Math.min(index, 8) * 30}ms`,
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-        <div style={{ minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 7, flexWrap: "wrap" }}>
-            <Link to={`/symbols/${entry.symbol.id}`} className="mono" style={{ fontWeight: 700, fontSize: 15.5, color: "var(--text)" }}>
-              {entry.symbol.ticker}
-            </Link>
-            <span className="muted" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {entry.symbol.name}
-            </span>
-          </div>
-          <div style={{ marginTop: 5, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <PriceChange quote={entry.latest_quote} />
-            <FreshnessBadge quote={entry.latest_quote} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 12, minWidth: 0 }}>
+          <Link to={`/symbols/${entry.symbol.id}`} style={{ flex: "none", marginTop: 1 }}>
+            <SymbolAvatar ticker={entry.symbol.ticker} size={40} />
+          </Link>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 7, flexWrap: "wrap" }}>
+              <Link to={`/symbols/${entry.symbol.id}`} className="mono" style={{ fontWeight: 700, fontSize: 16, color: "var(--text)" }}>
+                {entry.symbol.ticker}
+              </Link>
+              <span className="muted" style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {entry.symbol.name}
+              </span>
+            </div>
+            <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <PriceChange quote={entry.latest_quote} />
+              <FreshnessBadge quote={entry.latest_quote} />
+            </div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 14, flex: "none" }}>
-          <Sparkline points={undefined} />
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "none" }}>
+          <Sparkline points={sparklinePoints} />
           <AcknowledgeButton watchlistId={watchlistId} itemId={entry.watchlist_item_id} />
         </div>
       </div>
 
       {entry.baseline_status === "building" && (
-        <div style={{ marginTop: 10 }}>
+        <div style={{ marginTop: 12 }}>
           <BuildingBaselineNotice />
         </div>
       )}
 
       {entry.events_since_last_view.length > 0 && (
-        <ul style={{ listStyle: "none", padding: 0, marginTop: 10, marginBottom: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+        <ul style={{ listStyle: "none", padding: 0, marginTop: 12, marginBottom: 0, display: "flex", flexDirection: "column", gap: 5 }}>
           {entry.events_since_last_view.map((event, i) => {
             const meta = EVENT_META[event.event_type];
             const isTrustFlag = event.event_type === "data_quality_flag";
@@ -99,7 +108,7 @@ export function DigestEntryCard({
                   alignItems: "flex-start",
                   gap: 8,
                   fontSize: 13,
-                  padding: "6px 9px",
+                  padding: "7px 10px",
                   borderRadius: 8,
                   background: isTrustFlag ? "var(--neutral-bg)" : "var(--gray-50)",
                   color: isTrustFlag ? "var(--neutral)" : "var(--text-secondary)",

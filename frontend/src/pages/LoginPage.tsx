@@ -38,7 +38,11 @@ export function LoginPage() {
   }
 
   return (
-    <AuthShell title="Welcome back" subtitle="Log in to see what's changed since your last visit.">
+    <AuthShell
+      title="Welcome back"
+      subtitle="Log in to see what's changed since your last visit."
+      heroImage="/images/login-bg.png"
+    >
       {justRegistered && !error && (
         <p
           style={{

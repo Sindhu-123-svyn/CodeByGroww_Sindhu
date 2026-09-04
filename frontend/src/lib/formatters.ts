@@ -8,6 +8,15 @@ export function formatPercent(pct: number): string {
   return `${sign}${pct.toFixed(2)}%`;
 }
 
+/** Day % change vs today's open — the one formula every price/change UI
+ * (PriceChange, Market Overview, …) derives from, so they never drift
+ * out of sync with each other. Null when there's no `open` to diff
+ * against (older back-filled ticks) — never fabricated. */
+export function dayChangePct(quote: { price: number; open: number | null } | null | undefined): number | null {
+  if (!quote || !quote.open) return null;
+  return ((quote.price - quote.open) / quote.open) * 100;
+}
+
 export function formatVolume(volume: number): string {
   if (volume >= 1_000_000) return `${(volume / 1_000_000).toFixed(1)}M`;
   if (volume >= 1_000) return `${(volume / 1_000).toFixed(1)}K`;

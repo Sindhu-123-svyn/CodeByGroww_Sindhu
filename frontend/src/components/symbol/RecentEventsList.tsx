@@ -20,27 +20,33 @@ export function RecentEventsList({ events }: { events: RecentEventOut[] }) {
   }
 
   return (
-    <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+    <div className="timeline">
       {events.map((event, i) => {
         const meta = EVENT_META[event.event_type];
         return (
-          <li key={i} className="card" style={{ padding: 12, fontSize: 13.5 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 650, color: meta.color }}>
-                {meta.icon(14)} {meta.label}
-              </span>
-              <span className="muted" style={{ flex: "none" }}>
-                {formatRelativeTime(event.event_time)}
-              </span>
-            </div>
-            {event.why && (
-              <div className="muted" style={{ marginTop: 3 }}>
-                {event.why}
+          <div key={i} className="timeline-item">
+            <span
+              className="timeline-dot"
+              style={{ background: `color-mix(in srgb, ${meta.color} 16%, transparent)`, color: meta.color }}
+            >
+              {meta.icon(11)}
+            </span>
+            <div className="card" style={{ padding: "10px 12px", fontSize: 13.5 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <span style={{ fontWeight: 650, color: meta.color }}>{meta.label}</span>
+                <span className="muted" style={{ flex: "none" }}>
+                  {formatRelativeTime(event.event_time)}
+                </span>
               </div>
-            )}
-          </li>
+              {event.why && (
+                <div className="muted" style={{ marginTop: 3 }}>
+                  {event.why}
+                </div>
+              )}
+            </div>
+          </div>
         );
       })}
-    </ul>
+    </div>
   );
 }

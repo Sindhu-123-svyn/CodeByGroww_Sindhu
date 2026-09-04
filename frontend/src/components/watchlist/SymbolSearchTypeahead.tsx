@@ -3,6 +3,7 @@ import { useSymbolSearch } from "../../hooks/useSymbolSearch";
 import * as symbolsApi from "../../api/symbols";
 import { ApiError } from "../../api/errors";
 import { AlertTriangleIcon, PlusIcon, SearchIcon } from "../shared/Icons";
+import { SymbolAvatar } from "../shared/SymbolAvatar";
 import type { SymbolOut } from "../../api/types";
 
 interface ValidatedSymbol {
@@ -76,27 +77,31 @@ export function SymbolSearchTypeahead({
             return (
               <li
                 key={symbol.id}
-                className="card"
+                className="card card-interactive"
                 style={{
                   padding: "10px 12px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  gap: 10,
                   opacity: isInvalid ? 0.65 : 1,
                 }}
               >
-                <div style={{ minWidth: 0 }}>
-                  <span className="mono" style={{ fontWeight: 700 }}>
-                    {symbol.ticker}
-                  </span>{" "}
-                  <span className="muted">{symbol.name}</span>
-                  {isInvalid && (
-                    <div className="error-text" style={{ marginTop: 2 }}>
-                      <AlertTriangleIcon size={12} /> {v.reason}
-                    </div>
-                  )}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                  <SymbolAvatar ticker={symbol.ticker} size="sm" />
+                  <div style={{ minWidth: 0 }}>
+                    <span className="mono" style={{ fontWeight: 700 }}>
+                      {symbol.ticker}
+                    </span>{" "}
+                    <span className="muted">{symbol.name}</span>
+                    {isInvalid && (
+                      <div className="error-text" style={{ marginTop: 2 }}>
+                        <AlertTriangleIcon size={12} /> {v.reason}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <button className="btn btn-primary btn-sm" disabled={isInvalid} onClick={() => onAdd(symbol.id)}>
+                <button className="btn btn-primary btn-sm" disabled={isInvalid} onClick={() => onAdd(symbol.id)} style={{ flex: "none" }}>
                   <PlusIcon size={13} /> Add
                 </button>
               </li>
